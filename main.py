@@ -3,7 +3,11 @@ from typing import Optional, Dict, List
 from pydantic import BaseModel
 import uvicorn
 
-app = FastAPI()
+app = FastAPI(
+    title="Employment Management API",
+    description="For educational purposes only",
+    version="1.0"
+)
 
 class Address(BaseModel):
     address_1: str
@@ -24,7 +28,7 @@ class Data(BaseModel):
 
 data_store = {}
 
-@app.get("/")
+@app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
     return {"Hello": "World"}
 
