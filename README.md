@@ -6,9 +6,9 @@ For documentation run the program and go to 127.0.0.1:8000/docs
 
 uvcorn.run is included in main.py so you don't have to run it separtely.
 
-Click on run.bat to run the program, the bat file will install fastapi and uvicorn if they are not already installed on your system and start the application.
+If you want to run this on your local machine just click on run.bat to run the program, the bat file will install fastapi and uvicorn if they are not already installed on your system and start the application.
 
-Dockerfile included:
+Alternatively you can run this as a docker Container.
 Build the docker image:
 ```bash
 docker build -t fastapi .
