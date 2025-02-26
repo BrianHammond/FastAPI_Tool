@@ -1,0 +1,13 @@
+services:
+  fastapi:
+    image: fastapi
+    container_name: fastapi
+    ports:
+      - "8000:8000"
+    restart: always
+    volumes:
+      - fastapi-data:/app/data
+
+volumes:
+  fastapi-data:
+    driver: local

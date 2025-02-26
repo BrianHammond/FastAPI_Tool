@@ -15,8 +15,7 @@ docker build -t fastapi .
 ```
 Run the docker container in this example the name of the container will be fastapi:
 ```bash
-docker run -d -p 8000:8000 --name fastapi fastapi
-
+docker-compose up -d
 ```
 
 Best Regards,<br/>
