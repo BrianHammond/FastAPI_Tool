@@ -11,11 +11,12 @@ Click on run.bat to run the program, the bat file will install fastapi and uvico
 Dockerfile included:
 Build the docker image:
 ```bash
-docker build -t fastapi-app .
+docker build -t fastapi .
 ```
-Run the docker container:
+Run the docker container in this example the name of the container will be fastapi:
 ```bash
-docker run -d -p 8000:8000 fastapi-app
+docker run -d -p 8000:8000 --name fastapi fastapi
+
 ```
 
 Best Regards,<br/>
