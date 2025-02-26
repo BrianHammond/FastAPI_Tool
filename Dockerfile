@@ -1,5 +1,4 @@
-# Use the official Python 3.13 image as the base image
-FROM python:3.13
+FROM python:3.13.2-alpine3.21
 
 # Set the working directory inside the container
 WORKDIR /app
