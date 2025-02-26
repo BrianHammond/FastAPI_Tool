@@ -4,6 +4,8 @@ I'm experimenting with FastAPI.
 
 For documentation run the program and go to 127.0.0.1:8000/docs
 
+uvcorn.run is included in main.py so you don't have to run it separtely.
+
 Click on run.bat to run the program, the bat file will install fastapi and uvicorn if they are not already installed on your system and start the application.
 
 Best Regards,<br/>
