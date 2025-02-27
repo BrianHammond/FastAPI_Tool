@@ -7,23 +7,14 @@ services:
     ports:
       - "8000:8000"
     restart: always
+    networks:
+      - docker-bridge # rename this to the bridge on your system
     volumes:
       - ./src:/app/src # Mounts the src directory into the container
       - ./requirements.txt:/app/requirements.txt # Mounts the requirements.txt file into the container
-    depends_on:
-      - redis
-
-  redis:
-    image: "redis:alpine"
-    container_name: redis
-    ports:
-      - "6379:6379"
-    restart: always
-    volumes:
-      - redis-data:/data
-
 volumes:
   fastapi-data:
     driver: local
-  redis-data:
-    driver: local
+networks:
+  docker-bridge: # rename this to the bridge on your system
+    external: true
