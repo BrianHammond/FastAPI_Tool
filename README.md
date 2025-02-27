@@ -4,18 +4,13 @@ I'm experimenting with FastAPI.
 
 For documentation run the program and go to 127.0.0.1:8000/docs
 
-uvcorn.run is included in main.py so you don't have to run it separtely.
-
 If you want to run this on your local machine just click on run.bat to run the program, the bat file will install fastapi and uvicorn if they are not already installed on your system and start the application.
 
-Alternatively you can run this as a docker Container.
-Build the docker image:
+Redis is used as a database, this FastAPI tool is configured to use 127.0.0.1 but you can just change the IP depending on your system.
+
+The docker-compose.yaml builds the FastAPI tool and includes Redis for easy testing.
 ```bash
-docker build -t fastapi .
-```
-Run the docker container in this example the name of the container will be fastapi:
-```bash
-docker-compose up -d
+docker-compose up
 ```
 
 Best Regards,<br/>
