@@ -10,7 +10,7 @@ Redis is used as a database, this FastAPI tool is configured to use 127.0.0.1 bu
 
 Tested working with [Redis Cloud](https://redis.io/cloud/)
 
-The docker-compose.yaml builds the FastAPI tool and includes Redis for easy testing.
+The docker-compose.yaml builds the FastAPI tool if you want to use it in Docker.
 ```bash
 docker-compose up
 ```
