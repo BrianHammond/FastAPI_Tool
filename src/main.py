@@ -27,13 +27,13 @@ class Data(BaseModel):
     address: Address
     misc: Optional[str] = None
 
-# Connect to Redis Cloud
+# Connect to Redis Cloud (replace this whole section with the code provided by redis)
 r = redis.Redis(
-    host='redis-cloud.com', # replace this with your system
-    port=17279,
+    host='redis-hostname provided by redis cloud',
+    port=port provided by redis cloud,
     decode_responses=True,
     username="default",
-    password="12345", # replace this with yours
+    password="password provided by redis cloud",
 )
 
 success = r.set('foo', 'bar')
@@ -42,6 +42,7 @@ success = r.set('foo', 'bar')
 result = r.get('foo')
 print(result)
 # >>> bar
+# end of Redis Cloud Code
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
