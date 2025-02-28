@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from typing import Optional, Dict, List
 from pydantic import BaseModel
-import redis.asyncio as aioredis  # Import redis.asyncio instead of aioredis
+import redis
 import json
 
 app = FastAPI(
@@ -27,70 +27,67 @@ class Data(BaseModel):
     address: Address
     misc: Optional[str] = None
 
-# Redis setup
-REDIS_HOST = "redis"  # Redis server address, use the appropriate address if you're using a cloud instance
-REDIS_PORT = 6379  # Default Redis port
-redis = None
+# Connect to Redis Cloud
+r = redis.Redis(
+    host='redis-cloud.com', # replace this with your system
+    port=17279,
+    decode_responses=True,
+    username="default",
+    password="12345", # replace this with yours
+)
 
-async def get_redis():
-    global redis
-    if not redis:
-        redis = await aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}")
-    return redis
+success = r.set('foo', 'bar')
+# True
+
+result = r.get('foo')
+print(result)
+# >>> bar
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
     return {"Hello": "World"}
 
 @app.get("/getdata", response_model=Dict[str, List[Data]], description="Leaving the employee_id blank will return all")  # Get Results
-async def get_data(employee_id: Optional[int] = None):
-    redis = await get_redis()
-
+def get_data(employee_id: Optional[int] = None):
     if employee_id is not None:  # If ID is provided, return that specific data
-        data = await redis.get(f"employee:{employee_id}")
+        data = r.get(f"employee:{employee_id}")
         if data:
             return {"employees": [json.loads(data)]}  # Deserialize the data from Redis and return it as a list
         else:
             raise HTTPException(status_code=404, detail="Data not found")
     else:  # If ID is not provided, return all data as a list under "Employees"
-        keys = await redis.keys("employee:*")  # Get all employee keys
+        keys = r.keys("employee:*")  # Get all employee keys
         if not keys:
             return {"employees": []}
 
         employees = []
         for key in keys:
-            data = await redis.get(key)
+            data = r.get(key)
             if data:
                 employees.append(json.loads(data))
         return {"employees": employees}
 
 @app.post("/postdata", response_model=Data, description="employee_id needs to be unique as it is used as a key value")  # Post Results
-async def post_data(data: Data):
-    redis = await get_redis()
-
-    if await redis.exists(f"employee:{data.employee_id}"):
+def post_data(data: Data):
+    if r.exists(f"employee:{data.employee_id}"):
         raise HTTPException(status_code=400, detail="Data already exists")
 
-    await redis.set(f"employee:{data.employee_id}", json.dumps(data.dict()))  # Store the Data object as JSON
+    r.set(f"employee:{data.employee_id}", json.dumps(data.dict()))  # Store the Data object as JSON
     return data
 
 @app.put("/putdata/{employee_id}", response_model=Data)  # Update Results
-async def put_data(employee_id: int, data: Data):
-    redis = await get_redis()
-
-    if not await redis.exists(f"employee:{employee_id}"):
+def put_data(employee_id: int, data: Data):
+    if not r.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    await redis.set(f"employee:{employee_id}", json.dumps(data.dict()))  # Update the data in Redis
+    r.set(f"employee:{employee_id}", json.dumps(data.dict()))  # Update the data in Redis
     return data
 
 @app.delete("/deletedata/{employee_id}", response_model=Data)  # Delete Results
-async def delete_data(employee_id: int):
-    redis = await get_redis()
-
-    if not await redis.exists(f"employee:{employee_id}"):
+def delete_data(employee_id: int):
+    if not r.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    data = await redis.get(f"employee:{employee_id}")
-    await redis.delete(f"employee:{employee_id}")  # Remove the data from Redis
+    data = r.get(f"employee:{employee_id}")
+    r.delete(f"employee:{employee_id}")  # Remove the data from Redis
     return json.loads(data)  # Return the deleted data

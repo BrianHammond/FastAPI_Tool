@@ -8,6 +8,8 @@ If you want to run this on your local machine just click on run.bat to run the p
 
 Redis is used as a database, this FastAPI tool is configured to use 127.0.0.1 but you can just change the IP depending on your system.
 
+Tested working with [Redis Cloud](https://redis.io/cloud/)
+
 The docker-compose.yaml builds the FastAPI tool and includes Redis for easy testing.
 ```bash
 docker-compose up
