@@ -20,7 +20,7 @@ echo All packages installed successfully.
 
 REM Run the Python script (main.py) after installation
 echo Running the Python script...
-uvicorn src.main:app --reload
+uvicorn application:application --reload
 if %errorlevel% neq 0 (
     echo There was an error running the Python script.
     exit /b

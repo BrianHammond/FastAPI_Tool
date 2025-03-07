@@ -10,7 +10,7 @@ services:
     networks:
       - docker-bridge # rename this to the bridge on your system
     volumes:
-      - ./src:/app/src # Mounts the src directory into the container
+      - ./application.py:/app/application.py # Mounts the src directory into the container
       - ./requirements.txt:/app/requirements.txt # Mounts the requirements.txt file into the container
 volumes:
   fastapi-data:

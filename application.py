@@ -28,21 +28,18 @@ class Data(BaseModel):
     misc: Optional[str] = None
 
 # Connect to Redis Cloud (replace this whole section with the code provided by redis)
+"""Basic connection example.
+"""
+
+import redis
+
 r = redis.Redis(
-    host='redis-hostname provided by redis cloud',
-    port=port provided by redis cloud,
+    host='redis-16921.c290.ap-northeast-1-2.ec2.redns.redis-cloud.com',
+    port=16921,
     decode_responses=True,
     username="default",
-    password="password provided by redis cloud",
+    password="3CVeV4kwwj17Mt62T15lWlaJtIJRAOlr",
 )
-
-success = r.set('foo', 'bar')
-# True
-
-result = r.get('foo')
-print(result)
-# >>> bar
-# end of Redis Cloud Code
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
@@ -92,3 +89,5 @@ def delete_data(employee_id: int):
     data = r.get(f"employee:{employee_id}")
     r.delete(f"employee:{employee_id}")  # Remove the data from Redis
     return json.loads(data)  # Return the deleted data
+
+application = app  # Alias for AWS Elastic Beanstalk
