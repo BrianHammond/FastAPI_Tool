@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from typing import Optional, Dict, List
 from pydantic import BaseModel
 import redis
@@ -13,6 +14,7 @@ app = FastAPI(
 class Address(BaseModel):
     address_1: Optional[str] = None
     address_2: Optional[str] = None
+    country: Optional[str] = None
 
 class Name(BaseModel):
     first_name: str
@@ -28,11 +30,6 @@ class Data(BaseModel):
     misc: Optional[str] = None
 
 # Connect to Redis Cloud (replace this whole section with the code provided by redis)
-"""Basic connection example.
-"""
-
-import redis
-
 r = redis.Redis(
     host='redis-16921.c290.ap-northeast-1-2.ec2.redns.redis-cloud.com',
     port=16921,
@@ -43,7 +40,7 @@ r = redis.Redis(
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
-    return {"Hello": "World"}
+    return HTMLResponse(content="For more information go to <a href='/docs'>docs</a>")
 
 @app.get("/getdata", response_model=Dict[str, List[Data]], description="Leaving the employee_id blank will return all")  # Get Results
 def get_data(employee_id: Optional[int] = None):
