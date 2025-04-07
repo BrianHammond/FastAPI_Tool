@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from typing import Optional, Dict, List
 from pydantic import BaseModel
-import redis
+from redis_cloud import redis_cloud
 import json
 
 app = FastAPI(
@@ -29,15 +29,6 @@ class Data(BaseModel):
     address: Address
     misc: Optional[str] = None
 
-# Connect to Redis Cloud (replace this whole section with the code provided by redis)
-r = redis.Redis(
-    host='redis-cloud.com',
-    port=12345,
-    decode_responses=True,
-    username="default",
-    password="password",
-)
-
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
 def home():
     return HTMLResponse(content="For more information go to <a href='/docs'>docs</a>")
@@ -45,19 +36,19 @@ def home():
 @app.get("/getdata", response_model=Dict[str, List[Data]], description="Leaving the employee_id blank will return all")  # Get Results
 def get_data(employee_id: Optional[int] = None):
     if employee_id is not None:  # If ID is provided, return that specific data
-        data = r.get(f"employee:{employee_id}")
+        data = redis_cloud.get(f"employee:{employee_id}")
         if data:
             return {"employees": [json.loads(data)]}  # Deserialize the data from Redis and return it as a list
         else:
             raise HTTPException(status_code=404, detail="Data not found")
     else:  # If ID is not provided, return all data as a list under "Employees"
-        keys = r.keys("employee:*")  # Get all employee keys
+        keys = redis_cloud.keys("employee:*")  # Get all employee keys
         if not keys:
             return {"employees": []}
 
         employees = []
         for key in keys:
-            data = r.get(key)
+            data = redis_cloud.get(key)
             if data:
                 employees.append(json.loads(data))
         return {"employees": employees}
@@ -72,19 +63,19 @@ def post_data(data: Data):
 
 @app.put("/putdata/{employee_id}", response_model=Data)  # Update Results
 def put_data(employee_id: int, data: Data):
-    if not r.exists(f"employee:{employee_id}"):
+    if not redis_cloud.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    r.set(f"employee:{employee_id}", json.dumps(data.model_dump()))  # Update the data in Redis
+    redis_cloud.set(f"employee:{employee_id}", json.dumps(data.model_dump()))  # Update the data in Redis
     return data
 
 @app.delete("/deletedata/{employee_id}", response_model=Data)  # Delete Results
 def delete_data(employee_id: int):
-    if not r.exists(f"employee:{employee_id}"):
+    if not redis_cloud.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    data = r.get(f"employee:{employee_id}")
-    r.delete(f"employee:{employee_id}")  # Remove the data from Redis
+    data = redis_cloud.get(f"employee:{employee_id}")
+    redis_cloud.delete(f"employee:{employee_id}")  # Remove the data from Redis
     return json.loads(data)  # Return the deleted data
 
 application = app  # Alias for AWS Elastic Beanstalk
