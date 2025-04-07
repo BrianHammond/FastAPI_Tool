@@ -31,11 +31,11 @@ class Data(BaseModel):
 
 # Connect to Redis Cloud (replace this whole section with the code provided by redis)
 r = redis.Redis(
-    host='redis-cloud.com',
+    host='redis-14416.c290.ap-northeast-1-2.ec2.redns.redis-cloud.com',
     port=14416,
     decode_responses=True,
     username="default",
-    password="password",
+    password="iRPQGAP1U7pxPRRiFoysfX4POkR0B5R4",
 )
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
@@ -67,7 +67,7 @@ def post_data(data: Data):
     if r.exists(f"employee:{data.employee_id}"):
         raise HTTPException(status_code=400, detail="Data already exists")
 
-    r.set(f"employee:{data.employee_id}", json.dumps(data.model.dump()))  # Store the Data object as JSON
+    r.set(f"employee:{data.employee_id}", json.dumps(data.model_dump()))  # Store the Data object as JSON
     return data
 
 @app.put("/putdata/{employee_id}", response_model=Data)  # Update Results
@@ -75,7 +75,7 @@ def put_data(employee_id: int, data: Data):
     if not r.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    r.set(f"employee:{employee_id}", json.dumps(data.model.dump()))  # Update the data in Redis
+    r.set(f"employee:{employee_id}", json.dumps(data.model_dump()))  # Update the data in Redis
     return data
 
 @app.delete("/deletedata/{employee_id}", response_model=Data)  # Delete Results
