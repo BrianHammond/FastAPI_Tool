@@ -22,7 +22,7 @@ class Name(BaseModel):
     last_name: Optional[str] = None
 
 class Data(BaseModel):
-    employee_id: int
+    id: str
     name: Name
     age: Optional[int] = None
     title: Optional[str] = None
@@ -34,9 +34,9 @@ def home():
     return HTMLResponse(content="For more information go to <a href='/docs'>docs</a>")
 
 @app.get("/getdata", response_model=Dict[str, List[Data]], description="Leaving the employee_id blank will return all")  # Get Results
-def get_data(employee_id: Optional[int] = None):
-    if employee_id is not None:  # If ID is provided, return that specific data
-        data = redis_cloud.get(f"employee:{employee_id}")
+def get_data(id: Optional[int] = None):
+    if id is not None:  # If ID is provided, return that specific data
+        data = redis_cloud.get(f"employee:{id}")
         if data:
             return {"employees": [json.loads(data)]}  # Deserialize the data from Redis and return it as a list
         else:
@@ -55,27 +55,27 @@ def get_data(employee_id: Optional[int] = None):
 
 @app.post("/postdata", response_model=Data, description="employee_id needs to be unique as it is used as a key value")  # Post Results
 def post_data(data: Data):
-    if r.exists(f"employee:{data.employee_id}"):
+    if redis_cloud.exists(f"employee:{data.id}"):
         raise HTTPException(status_code=400, detail="Data already exists")
 
-    r.set(f"employee:{data.employee_id}", json.dumps(data.model_dump()))  # Store the Data object as JSON
+    redis_cloud.set(f"employee:{data.id}", json.dumps(data.model_dump()))  # Store the Data object as JSON
     return data
 
-@app.put("/putdata/{employee_id}", response_model=Data)  # Update Results
-def put_data(employee_id: int, data: Data):
-    if not redis_cloud.exists(f"employee:{employee_id}"):
+@app.put("/putdata/{id}", response_model=Data)  # Update Results
+def put_data(id: str, data: Data):
+    if not redis_cloud.exists(f"employee:{id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    redis_cloud.set(f"employee:{employee_id}", json.dumps(data.model_dump()))  # Update the data in Redis
+    redis_cloud.set(f"employee:{id}", json.dumps(data.model_dump()))  # Update the data in Redis
     return data
 
-@app.delete("/deletedata/{employee_id}", response_model=Data)  # Delete Results
-def delete_data(employee_id: int):
-    if not redis_cloud.exists(f"employee:{employee_id}"):
+@app.delete("/deletedata/{id}", response_model=Data)  # Delete Results
+def delete_data(id: str):
+    if not redis_cloud.exists(f"employee:{id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    data = redis_cloud.get(f"employee:{employee_id}")
-    redis_cloud.delete(f"employee:{employee_id}")  # Remove the data from Redis
+    data = redis_cloud.get(f"employee:{id}")
+    redis_cloud.delete(f"employee:{id}")  # Remove the data from Redis
     return json.loads(data)  # Return the deleted data
 
 application = app  # Alias for AWS Elastic Beanstalk
