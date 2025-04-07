@@ -31,8 +31,8 @@ class Data(BaseModel):
 
 # Connect to Redis Cloud (replace this whole section with the code provided by redis)
 r = redis.Redis(
-    host='redis.host',
-    port=16921,
+    host='redis-cloud.com',
+    port=14416,
     decode_responses=True,
     username="default",
     password="password",
@@ -67,7 +67,7 @@ def post_data(data: Data):
     if r.exists(f"employee:{data.employee_id}"):
         raise HTTPException(status_code=400, detail="Data already exists")
 
-    r.set(f"employee:{data.employee_id}", json.dumps(data.dict()))  # Store the Data object as JSON
+    r.set(f"employee:{data.employee_id}", json.dumps(data.model.dump()))  # Store the Data object as JSON
     return data
 
 @app.put("/putdata/{employee_id}", response_model=Data)  # Update Results
@@ -75,7 +75,7 @@ def put_data(employee_id: int, data: Data):
     if not r.exists(f"employee:{employee_id}"):
         raise HTTPException(status_code=404, detail="Data not found")
 
-    r.set(f"employee:{employee_id}", json.dumps(data.dict()))  # Update the data in Redis
+    r.set(f"employee:{employee_id}", json.dumps(data.model.dump()))  # Update the data in Redis
     return data
 
 @app.delete("/deletedata/{employee_id}", response_model=Data)  # Delete Results

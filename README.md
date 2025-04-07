@@ -4,17 +4,10 @@ I'm experimenting with FastAPI.
 
 For documentation run the program and go to 127.0.0.1:8000/docs
 
-If you want to run this on your local machine just click on run.bat to run the program, the bat file will install fastapi and uvicorn if they are not already installed on your system and start the application.
-
-Redis is used as a database, this FastAPI tool is configured to use 127.0.0.1 but you can just change the IP depending on your system.
+Click on run.bat to run the program.
 
 Tested working with [Redis Cloud](https://redis.io/cloud/).<br/>
 For use with Redis Cloud replace lines 34-38 with information provided by Redis.
-
-The docker-compose.yaml builds the FastAPI tool if you want to use it in Docker.
-```bash
-docker-compose up
-```
 
 Best Regards,<br/>
 Brian
