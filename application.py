@@ -35,7 +35,7 @@ r = redis.Redis(
     port=12345,
     decode_responses=True,
     username="default",
-    password="somepassword",
+    password="password",
 )
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
