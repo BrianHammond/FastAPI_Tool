@@ -34,7 +34,7 @@ def home():
     return HTMLResponse(content="For more information go to <a href='/docs'>docs</a>")
 
 @app.get("/getdata", response_model=Dict[str, List[Data]], description="Leaving the employee_id blank will return all")  # Get Results
-def get_data(id: Optional[int] = None):
+def get_data(id: Optional[str] = None):
     if id is not None:  # If ID is provided, return that specific data
         data = redis_cloud.get(f"employee:{id}")
         if data:
