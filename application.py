@@ -31,11 +31,11 @@ class Data(BaseModel):
 
 # Connect to Redis Cloud (replace this whole section with the code provided by redis)
 r = redis.Redis(
-    host='redis-14416.c290.ap-northeast-1-2.ec2.redns.redis-cloud.com',
-    port=14416,
+    host='redis-cloud.com',
+    port=12345,
     decode_responses=True,
     username="default",
-    password="iRPQGAP1U7pxPRRiFoysfX4POkR0B5R4",
+    password="somepassword",
 )
 
 @app.get("/", summary="Home Endpoint", description="Returns a simple Hello World message. Can be used as base_url")
